@@ -1,9 +1,60 @@
-// select form
-// add form to the document
-// validate the data 
-// submit form 
-// create single project
-// add project to the list
+// Project Status
+enum ProjectStatus { Active, Finished }
+
+// Project type
+class Project {
+  constructor(
+    public id: string,
+    public title: string, 
+    public description: string, 
+    public people: number, 
+    public status: ProjectStatus) {
+    this.id = Math.random().toString();
+    this.title = title;
+    this.description = description;
+    this.people = people;
+  }
+}
+
+type Listener = (items: Project[]) => void;
+
+// Project State Managment 
+class ProjectState {
+  listeners: Listener[] = [];
+  projects: Project[] = [];
+  private static instance: ProjectState;
+
+  private constructor() {}
+
+  static getInstance() {
+    if(!this.instance) {
+      this.instance = new ProjectState();
+    } 
+    return this.instance;
+  }
+
+  addProject(title: string, description: string, people: number) {
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      people,
+      ProjectStatus.Active  
+    )
+
+    this.projects.push(newProject);
+    
+    for(const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice()) // To play around with referrence
+    }
+  }
+
+  addListener(listenerFn: Listener) {
+    this.listeners.push(listenerFn);
+  }
+}
+
+const projectState = ProjectState.getInstance();
 
 interface Validatable {
   value: string | number;
@@ -58,17 +109,42 @@ class ProjectList {
   private templateElement: HTMLTemplateElement;
   private hostElement: HTMLDivElement;
   private element: HTMLElement;
+  assignedProjects: Project[] = [];
 
   constructor(templateId: string, hostId: string, private type: 'active' | 'finished') {
     this.templateElement = document.getElementById(templateId)! as HTMLTemplateElement;
     this.hostElement = document.getElementById(hostId)! as HTMLDivElement;
-    
+    this.assignedProjects = [];
+
     const importedNode = document.importNode(this.templateElement.content, true);
     this.element = importedNode.firstElementChild as HTMLElement;
     this.element.id = `${this.type}-projects`;
 
+    projectState.addListener((projects: Project[]) => {
+      const relevantProjects = projects.filter(project => {
+        if(this.type === 'active') {
+          return project.status === ProjectStatus.Active;
+        }
+        return project.status === ProjectStatus.Finished;
+      });
+      this.assignedProjects = relevantProjects;
+      this.renderProjects();
+    });
+
     this.attach();
     this.renderContent();
+  }
+
+
+  private renderProjects() {
+      const listEl = document.getElementById(`${this.type}-projects-list`)! as HTMLUListElement;
+      listEl.innerHTML = '';
+
+      for(const prjItem of this.assignedProjects) {
+        const listItem = document.createElement('li');
+        listItem.textContent = prjItem.title;
+        listEl.appendChild(listItem);
+      }
   }
   
   private renderContent() {
@@ -166,10 +242,9 @@ class ProjectInput {
     const userInput = this.getherUserInput();
     if(Array.isArray(userInput)) {
       const [title, description, people] = userInput;
-      console.log(title, description, people);
+      projectState.addProject(title, description, people);
       this.clearInputs();
     }
-
   }
 
   private configure() {
@@ -185,6 +260,6 @@ class ProjectInput {
   }
 }
 
-const project1 = new ProjectInput('project-input', 'app');
+const project = new ProjectInput('project-input', 'app');
 const activeProjects = new ProjectList('project-list', 'app', 'active');
 const finishedProjects = new ProjectList('project-list', 'app', 'finished');
