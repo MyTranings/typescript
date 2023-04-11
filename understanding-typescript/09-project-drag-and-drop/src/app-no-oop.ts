@@ -25,12 +25,6 @@ const projectInputTemplate = 'project-input';
 let formTemplate = document.getElementById(projectInputTemplate)! as HTMLTemplateElement;
 let markup = formTemplate.content.cloneNode(true) as HTMLElement;
 
-class Project {
-  constructor() {
-
-  }
-}
-
 function handleForm() {
   
 }
