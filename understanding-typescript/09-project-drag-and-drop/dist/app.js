@@ -195,7 +195,7 @@ class ProjectList extends Component {
         const prjId = event.dataTransfer.getData('text/plain');
         projectState.moveProject(prjId, this.type === 'active' ? ProjectStatus.Active : ProjectStatus.Finished);
     }
-    dragLeaveHandler(event) {
+    dragLeaveHandler(_) {
         const listEl = this.element.querySelector('ul');
         listEl.classList.remove('droppable');
     }
