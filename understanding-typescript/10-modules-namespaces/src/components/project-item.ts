@@ -1,4 +1,4 @@
-import { Component } from "./base-component.js";
+import Component from "./base-component.js";
 import { Draggable } from "../modules/drag-drop.js";
 import { Project } from "../modules/project.js";
 import { AutoBind } from "../decorators/autobind.js";

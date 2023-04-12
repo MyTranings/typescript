@@ -1,5 +1,5 @@
-import { Validatable, validate } from "./../util/validation.js";
-import { Component } from "./base-component.js";
+import * as Validation from "./../util/validation.js";
+import Component from "./base-component.js";
 import { AutoBind } from "./../decorators/autobind.js";
 import { projectState } from "../state/project-state.js";
 
@@ -37,18 +37,18 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLElement> {
     const enteredDescription = this.descriptionInputElement.value;
     const enteredPeople = this.peopleInputElement.value;
 
-    const titleValidatable: Validatable = {
+    const titleValidatable: Validation.Validatable = {
       value: enteredTitle,
       require: true,
     };
 
-    const desctiptionValidatable: Validatable = {
+    const desctiptionValidatable: Validation.Validatable = {
       value: enteredDescription,
       require: true,
       minLength: 5,
     };
 
-    const peopleValidatable: Validatable = {
+    const peopleValidatable: Validation.Validatable = {
       value: enteredPeople,
       require: true,
       min: 1,
@@ -56,9 +56,9 @@ export class ProjectInput extends Component<HTMLDivElement, HTMLElement> {
 
     // if(enteredTitle.trim().length === 0 || enteredDescription.trim().length === 0 || enteredPeople.trim().length === 0){
     if (
-      !validate(titleValidatable) ||
-      !validate(desctiptionValidatable) ||
-      !validate(peopleValidatable)
+      !Validation.validate(titleValidatable) ||
+      !Validation.validate(desctiptionValidatable) ||
+      !Validation.validate(peopleValidatable)
     ) {
       // alert('Error! Fields must have value')
       console.error("Error! Fields must have value");
