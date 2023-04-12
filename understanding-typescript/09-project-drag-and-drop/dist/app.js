@@ -130,8 +130,19 @@ class ProjectItem extends Component {
         this.element.querySelector('p').textContent = this.project.description;
     }
     configure() {
+        this.element.addEventListener('dragstart', this.dragStartHandler);
+        this.element.addEventListener('dragend', this.dragEndHandler);
+    }
+    dragStartHandler(event) {
+        console.log(event);
+    }
+    dragEndHandler(_) {
+        console.log('DragEnd');
     }
 }
+__decorate([
+    AutoBind
+], ProjectItem.prototype, "dragStartHandler", null);
 // Project List
 class ProjectList extends Component {
     constructor(templateId, hostId, type) {
